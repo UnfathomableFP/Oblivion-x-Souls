@@ -1,1 +1,225 @@
+scn 11TowerDefenseModeScript
+
+short Activated					;Basically, a glorified DoOnce variable
+ref HordeSpell          ;this ref points to a spell that handles the health and damage boost of the enemies. 
+                        ;health increases by +25 a round. 
+                        ;since damage is calculated by CurrentStamina/BaseMaxStamina, we can fortify stamina by 25
+                        ;to deal (225/200)*100% more damage
+
+;TDM stands for Tower Defense Mode. This mode has infinite waves of enemies that grow increasingly stronger with every wave.
+;players gets 10 seconds between rounds to recuperate. The game mode will end when they reach < 1 health, upon which they will
+; receive 1000 souls and gold for each wave they've completed. 			
+
+;This variable must be created in Globals
+;Global IsInTDMGlobal				;a 0 or 1 flag. if 0, kill all hostiles and fully heal the player. is set to 0 when the player dies.
+                          ;stands for Is In Tower Defense Mode Global, a global variable which can be used in any cell of the game
+
+short IsInTDMLocal        ;a 0 or 1 flag that copies IsInTDMGlobal. uses less memory and is quicker to access. 
+short Wave			;the number of waves completed. The wave reported begins at 0, for Multiplier sakes. this is a global
+short DWave		;the display wave we see on screen. Is used to compute the final reward and when bosses spawn.
+float Multiplier		;each wave increases the difficulty by 10% ^ n, where n = Wave. damage and health of enemies
+
+short Quantity		;the quantity of enemies that have spawned this round
+float Period			;the period of time between enemies spawning. should only be between 1-5 seconds.
+float PoolMax		;the maximum number of enemies spawning. should be 40
+float Pool			;the number of enemies that will spawn per Period of time.
+
+
+short Choosing  ;player is in menu for making decisions
+short Choice    ;the GetButtonPressed during the decision menu. is usually a 0, 1,...,<option size -1>
+float Scrolls    ;the number of scrolls a player is given during the Tower Defense Mode, usually 3-5
+
+short DoOnce ;messageboxes crash the game bc they suck, so we need to make sure they run once and then go away until the user needs them again.
+              ;if not set, a messagebox could spawn 100x a second and crash the game!
+
+float PreparationTimer	;the time between rounds
+float TimerKiller		;this is set before the script ends during a frame. When a frame starts, a timer is decreased. If it does not decrease, then 
+                    ;these two variables will be equal, and if so both are set to 0
+
+;function calls:
+;Spawn{} - spawns Knights of Order, Priests of Order, and Atronachs of Order
+;SpawnBoss{} - spawns Jyggalag in the center of the map to challenge the player.
+
+
+Begin onActivate
+	;if the player has activated, set flag for the proper gamemode to display message
+	if ( isActionRef Player == 1 && Choosing != 1 && IsInTDMGlobal!= 1)
+		set IsInTDMGlobal to 0    ;is set to -1 until we see the message. 
+		if DoOnce == 0
+			Messagebox "Are you ready to defend the realm from the Army of Jyggalag? You will have 10 seconds to prepare." "yes" "no"
+			Set DoOnce to 1
+		endif
+		set Choosing to 1
+
+	elseif ( IsInTDMGlobal == 1 )
+		if DoOnce == 0
+			Messagebox "Do you want to Skip Waiting or End The Battle?" "Skip Waiting" "End The Battle"
+			set DoOnce to 1
+		endif
+		set Choosing to 11
+	endif
+end
+
+Begin MenuMode
+	if PreparationTimer > 0
+		;just in case the ref stops decreasing the timer, the player can open their menu and the timer will still decrease. 
+		set PreparationTimer to ( PreparationTimer - GetSecondsPassed )
+
+		set IsInTDM to IsInTDMGlobal
+	else
+		set PreparationTimer to 0
+	endif
+end
+
+
+Begin GameMode  ;this script runs every frame or 0.01 seconds within the game. Because of this, we keep as much of it in IF statements to prevent errors until the 
+                ;right conditions are met to advance the script. 
+  if ( Player.getav Health < 1 || Player.GetDead )
+  	Player.resurrect
+  	Player.resethealth
+  	Set IsInTDMGlobal to 0
+  	Set IsInTDMLocal to 0
+  	Set Wave to -1
+  	set 11TDMEnemiesKilled to -1
+  	set Choosing to 0
+  	call 11TowerEndTDM ( DWave )
+  	set DoOnce to 0
+  	Player.cast 11DSPlayerDispel Player
+  endif
+  
+  ;increment Timer
+  if PreparationTimer > 0
+  	;just in case the ref stops decreasing the timer
+  	set PreparationTimer to ( PreparationTimer - GetSecondsPassed )
+  endif
+  if IsInTDMGlobal == 0		;the player has seen the first menu and has chosen yes or no
+  	if Choosing == 0
+  		;do nothing so the rest of the script runs
+  	elseif Choosing == 1  ;the player 
+  		set Choice to GetButtonPressed
+  
+  		if Choice == 0 ;yes
+  			set DoOnce to 0
+  
+  			set Scrolls to GetRandomPercent/20
+  				set Scrolls to Ceil Scrolls
+  				If Scrolls < 3
+  					set Scrolls to 3
+  				endif
+  			player.additem 11DSRandomTower Scrolls		;give the player some scrolls to prepare for the upcoming TDM
+  
+  			set PreparationTimer to 5 		;the player has 5 seconds to prepare
+  
+  			set Choosing to 0		;means we have chosen
+  			set IsInTDMGlobal to 1		;we are now in the fight
+  			set IsInTDM to IsInTDMGlobal
+  			set Wave to -1			;starting Wave at -1 so it increments to 0 soon
+  			set 11TDMEnemiesKilled to 99		;starts a wave refresh scenario, which happens whenever enemies killed is equal or greater than the maximum of enemies spawned.
+  			;print "70- finished setting up for the TDM"    ;no debugger, gotta do it in the game console to see. Press ~ to view the game console while playing
+  		elseif Choice == 1	;no
+  			set Choosing to 0
+  			set DoOnce to 0
+  			set 11TDMEnemiesKilled to -1			;we are not killing anyone anytime soon
+  			set IsInTDMGlobal to 0							; we are not doing any TDM this time around
+  		endif
+  	endif
+  elseif IsInTDMGlobal == 1	;the background code for the TDM. sets many variables such as wave size, difficulty, etc.
+  	;See if the player activated it again to select skip waiting or to end the TDM
+  	if Choosing == 11
+  		set Choice to GetButtonPressed
+  		
+  		if Choice == 0	;skip waiting
+  			set PreparationTimer to 0
+  			set Choosing to 0
+  			set DoOnce to 0
+  		elseif Choice == 1	;end the battle
+  			Player.cast 11DSPlayerDispel Player
+  			Set IsInTDM to 0
+  			Set Wave to -1
+  			set 11TDMEnemiesKilled to -1
+  			set Choosing to 0
+  			call 11TowerEndTDM ( DWave )
+  			set DoOnce to 0
+  			return
+  		endif
+  	endif
+  
+  	if ( GetGlobalValue 11TDMEnemiesKilled ) >= PoolMax	;essentially, all enemies are killed and we need to reset
+  
+  		set 11TDMEnemiesKilled to 0	;makes it so this whole block runs once per round and not again until they're all dead
+  
+  		set Wave to Wave +1			;1st iteration Wave is -1 +1 = 0
+  			if DWave <= Wave      ;set the dispaly number of waves
+  				set DWave to Wave + 1
+  			endif
+  
+  		set Quantity to 0		;the quantity of enemies that have spawn so far. Starts at 0, +1 per Spawn
+  
+  		let Period := GetRandomPercent/20			;the period of time between enemies spawning. should only be between 1-5 seconds.
+  			let Period := Ceil Period
+  			;printc "Period is generated: %f", Period
+  
+  		let PoolMax := PoolMax + 3		;the maximum number of enemies spawning. up to the max of 40
+  			if PoolMax > 40
+  				set PoolMax to 40
+  			endif
+  
+  		set Pool	to GetRandomPercent /20	;the number of enemies that will spawn per Period of time, 1-5.
+  			set Pool to Ceil Pool
+  
+  		if DWave == 0
+  			set PreparationTimer to 10
+  		elseif DWave % 5 == 0
+  			set PreparationTimer to 10
+  		else
+  			set PreparationTimer to 5
+  		endif
+  
+  	else	;EnemiesKilled is not equal to and not greater than the PoolMax of enemies to kill
+  
+  		if PreparationTimer <= 0		;count down for the 10 or 30 seconds
+  			;printc "Preparation Timer: %f" PreparationTimer
+  			Message "A new wave of enemies have arrived. Wave #: %f", DWave, 15
+  
+  			
+  			While Quantity < PoolMax		;continues to randomly spawn randoes until Quantity == PoolMax
+  				printc "Quantity < PoolMax: %f < %f" Quantity, PoolMax
+  				
+  				If Quantity < Pool		;continues to randomly spawn random enemies until Quanty == Pool
+  					printc "Quantity < Pool: %f < %f" Quantity, Pool
+  					set DoOnce to 0
+  
+  					if DWave % 5 == 0 && DWave >4
+  						set Pool to PoolMax 	
+  						call SpawnBoss
+  						if DoOnce == 0
+  							Message "Jyggalag threatens to overtake the Shivering Isles!" 15
+  							set DoOnce to 1
+  						endif
+  						set Quantity to PoolMax 
+  						set 11TDMEnemiesKilled to PoolMax - 1
+  						break
+  					else
+  						Print "spawning an enemy at the palace"
+  						call Spawn
+  						set Quantity to Quantity + 1
+  					endif
+  
+  				else	;quantity >= pool
+  					set DoOnce to 0
+  					set PreparationTimer to Period
+  
+  					set Pool	to Pool + GetRandomPercent /20	;the number of enemies that will spawn per Period of time, 1-5.
+  						set Pool to Ceil Pool							;we increase this to adjust for the next spawn period
+  						if Pool > PoolMax
+  							set Pool to PoolMax
+  						endif
+  					break					
+  				endif	;end quantity < Pool
+  			Loop	;end loop quantity < PoolMax -1
+  		endif ;end Preparation Timer > 0
+  	endif ;end enemieskilled >= PoolMax
+  endif	;end ifisinTDM
+
+end
 
