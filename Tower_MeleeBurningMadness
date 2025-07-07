@@ -1,1 +1,77 @@
+scn 11DSSummonTowerMadness
+
+  ;summons the Origin point that the Tower will be placed at .
+  
+  ref Tower
+  float z	;the height of the tower should be at least 10 units higher than the player's Z
+  
+  begin ScriptEffectStart
+  	let Tower := 11DSMadnessFlameTower
+  	let z := player.GetPos Z + 450
+  	
+  
+  	let Tower := player.placeatme Tower 1 200 0
+  	Tower.SetPoS Z z
+  end
+
+-----------------------------------------end summon script
+-----------------------------------------begin tower script
+scn 11DSMadnessTower
+
+;this segment handles the effects of this tower. Every 10 seconds, it will release a 10ft ball of flame at itself that explodes. 
+;creatures hit will be frenzied. Friendly fire will be enabled, turning heroes and units into enemies that will not count as 
+;horde mode enemies. Dispel can be cast to 'cure' them of their madness. 
+
+short initialized
+float timer
+ref Tower
+
+Begin OnLoad
+	Print "OnLoad... Madness Tower working"
+	set timer to 10
+	activate
+end
+
+Begin OnActivate
+	Print "OnActivate... Madness Tower working"
+  if timer < 10
+    ;do nothing
+  else
+	  set timer to 10
+  endif
+	activate
+end
+
+begin gameMode
+
+	if timer > 0
+		set timer to timer - getSecondsPassed
+	else
+		playgroup forward 1
+		;PRINT "casting madness explosion..."
+		set Tower to GetSelf
+		if ( player.getitemcount 11DSMadnessTowerRank5 == 1 )
+			Tower.cast 11DSMadnessTower5 Tower 
+			;PRINT "casting madness explosion 5..."
+		elseif ( player.getitemcount 11DSMadnessTowerRank4 == 1 )
+			Tower.cast 11DSMadnessTower4 Tower 
+			;PRINT "casting madness explosion 4..."
+		elseif ( player.getitemcount 11DSMadnessTowerRank3 == 1 )
+			Tower.cast 11DSMadnessTower3 Tower 
+			;PRINT "casting madness explosion 3..."
+		elseif ( player.getitemcount 11DSMadnessTowerRank2 == 1 )
+			Tower.cast 11DSMadnessTower2 Tower 
+		;	PRINT "casting madness explosion 2..."
+		elseif ( player.getitemcount 11DSMadnessTowerRank1 == 1 )
+			Tower.cast 11DSMadnessTower1 Tower 
+			;PRINT "casting madness explosion 1..."
+		else
+			Tower.cast 11DSMadnessTowerBase Tower 
+			;PRINT "casting madness explosion Base..."
+		endif
+		set timer to 10
+	endif
+
+end
+------------------------------------------------------------end tower script
 
