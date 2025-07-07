@@ -1,1 +1,96 @@
+scn 11DSPainTowerScript
+; come within range and this thing will shoot a fireball at you (range is 1200)
+
+float timer
+short ready
+short inRange
+short disabled
+ref mySelf
+ref target
+short targetID
+short SpellRank
+short size
+array_var enemies 
+ref enemy
+ref targetfinder
+short hasspawned
+string_var name
+
+begin onActivate
+
+	if isActionRef player == 0
+			set disabled to 1
+			set timer to -1
+			player.additem 11DSScrollSummonPainTowerScroll 1
+			disable
+			return
+	endif
+end
+
+begin gameMode
+	if hasspawned != 1
+		set mySelf to GetSelf
+		set targetfinder to "11TowerTargetFinderRef"  ;target finder is an npc that is invisible that spawns near the
+                                ;the player and is allied to them. any enemies they have the tower will target.
+		targetfinder.moveto playerref
+		set hasSpawned to 1
+	endif
+
+		if getDistance player < 20000  && timer <= 0
+			set inRange to 1
+		endif
+
+	if  timer <= 0 && inRange == 1
+		playgroup forward 0
+		set ready to 1
+		set inRange to 0
+		targetfinder.moveto mySelf
+		let enemies := targetfinder.GetTargets
+		let size := ar_size enemies
+	endif
+
+	;This section will choose the trap spell based on the PC's level... 
+	if ready == 1
+		;size failsafe. The next segments will crash if we run it while empty!
+		if size == 0
+			return
+		else
+			;get a target
+			let targetID := ( ar_size enemies)
+				let targetID := targetID * GetRandomPercent / 100 
+				let targetID := floor targetID 		;targets targetid 0 through 99, assuming 100 enemies
+				let target := enemies[targetID]
+
+				let name := target.GetName target
+				print "targetfinder's chosen: " + name
+
+			; check to make sure player is still in range
+			if getDistance player < 20000
+				set timer to 6
+				if  player.GetItemCount 11DSTowerPainBase >= 1
+					cast 11DSPainBase target
+				elseif  player.GetItemCount 11DSTowerPain1 >= 1
+					cast 11DSPain1 target
+				elseif player.GetItemCount 11DSTowerPain2 >= 1
+					cast 11DSPain2 target
+				elseif  player.GetItemCount 11DSTowerPain3 >= 1
+					cast 11DSPain3 target
+				elseif  player.GetItemCount 11DSTowerPain4 >= 1
+					cast 11DSPain4 target
+				elseif  player.GetItemCount 11DSTowerPain5 >= 1
+					cast 11DSPain5 target
+					set timer to 3
+				endif
+			endif
+		endif	
+		set ready to 0
+	elseif disabled == 1
+			return
+      disble  ;if not already done
+	endif
+
+	if timer > 0
+		set timer to timer - getSecondsPassed
+	endif
+end
 
