@@ -1,1 +1,94 @@
+scn 11DSSummonTowerHealingScript
 
+;summons the Origin point that the Tower or summon will return to after combat.
+
+ref Tower
+float z		;this should be the player's z position +10 units
+
+begin ScriptEffectStart
+	let Tower := 11DSHungerHealer
+	let z := player.GetPos Z + 100
+	
+	let Tower := player.placeatme Tower
+	Tower.SetPoS Z z
+end  ;-----------------------------------end the summon script
+;----------------------------------------begin the healing tower script
+scn 11DSHealingTower
+; come within range and this thing will shoot a fireball at you (range is 1200)
+
+float timer
+short ready
+short inRange
+short disabled
+ref mySelf
+ref myParent
+short next
+short SpellRank
+
+begin onActivate
+
+	if isActionRef player == 1
+		if disabled == 0
+			set disabled to 1
+			set timer to -1
+			player.additem 11DSScrollSummonHealingTowerScroll 1
+			disable
+			return
+		endif
+	endif
+
+end
+
+begin gameMode
+
+	if disabled == 0
+		
+		if getDistance player < 20000  && timer <= 0
+				set inRange to 1
+			endif
+		endif
+
+		if  timer <= 0 && inRange == 1
+				playgroup forward 0
+				set ready to 1
+				set timer to 6
+				set inRange to 0
+			endif
+
+		;This section will choose the trap spell based on the PC's level... hopefully
+		if player.GetLevel <= 7
+			set SpellRank to 1
+		elseif ( player.GetLevel >= 8 ) && ( player.GetLevel <= 15 )
+			set SpellRank to 2
+		elseif ( player.GetLevel >= 20 )
+			set SpellRank to 3
+		endif
+
+		if next == 1 && timer <= 5
+			set mySelf to getSelf
+			set myParent to getParentRef
+			myParent.activate mySelf 1
+			set next to 0
+		endif
+
+		if timer <= 4 && ready == 1 
+			; check to make sure player is still in range
+			if getDistance player < 20000
+				;Debug message
+				;message "Rank %.0f Fireball", SpellRank, 10
+				if SpellRank == 1
+					cast 11DSPleasure1 player
+				elseif SpellRank == 2
+					cast 11DSPleasure2 player
+				elseif SpellRank == 3
+					cast 11DSPleasure3 player
+				endif
+			endif
+	
+			set ready to 0
+		endif
+
+		if timer > 0
+			set timer to timer - getSecondsPassed
+		endif
+end
