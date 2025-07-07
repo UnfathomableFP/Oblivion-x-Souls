@@ -1,0 +1,22 @@
+scn 11TDMHordeKill
+
+;11TDMEnemiesKilled *
+short BaseHealth
+short killed
+
+begin OnDeath
+
+	set 11TDMEnemiesKilled to (GetGlobalValue 11TDMEnemiesKilled)+1
+	set killed to GetGlobalValue 11TDMEnemiesKilled
+
+	set BaseHealth to ( GetBaseAV Health )
+	player.additem 11DSSoul BaseHealth  ;this item is a Soul, which is collected for the new upgrading system. each new level increases an ability by +5
+
+	PrintC "Enemies Killed is now %f" killed
+	disable
+
+end
+
+begin OnActivate
+	Message "The corpse turns to ash your touch"
+end
