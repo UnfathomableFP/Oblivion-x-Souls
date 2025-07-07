@@ -1,1 +1,76 @@
+scn   11dsScriptHeroOrcCaptain
 
+;11DSHasHeroSummoned
+
+short Choosing
+short Choice
+short Hearts
+
+begin onactivate
+
+	if ( getdead == 1 || GetInWorldspace 11DSTestPalace ) && ( player.hasspell 11DSHeroSummonFringeFighters == 0)
+		let Hearts := player.getitemcount SEKnightHeart
+		set Choosing to 1
+	endif
+end
+
+
+begin GameMode
+
+	if Choosing == 0
+		return
+ 	elseif (Choosing == 1)
+		Messagebox "The hearts of the forsaken are cold and still. Do you want to use 6 Hearts of Order to revive them?" "Revive" "Walk Away"
+		set Choosing to 2
+	elseif (Choosing == 2)
+		set Choice to GetButtonPressed
+			if Choice == 0	; if choice is Revive
+				if Hearts >= 6
+					Messagebox "Thank you for reviving us! I can tell that you are the new lord of these lands - long ago, we attempted to become your chosen knights, but fell victim to despair at the hands of Thanos! If you have revived us, it means that we are worthy - or you're desperate. Either way, our hearts are yours to command!"
+					player.removeitem SEKnightHeart 6
+					player.addspell 11DSHeroSummonFringeFighters
+					if getdead == 1
+						disable
+					endif
+				else
+					Messagebox "You do not have enough hearts to revive this Hero" "okay"
+				endif
+				set Choosing to 0
+				return
+			else
+				return
+			endif
+	endif
+
+	if IsInTDM == 0 && IsInTDMX == 0		;we only have 2 maps. if both are not in TDM, disable the hero
+		disable
+	endif
+
+end
+;-----------------------------------end the orc captain script
+
+scn 11DSHeroKnightsScript
+;these guys follow the orc captain.
+ref Self
+ref OrcHero
+
+
+begin GameMode
+	set Self to GetSelf
+	set OrcHero to "11DSHeroOrcRef"
+
+	if ( Self.GetDistance OrcHero >= 5000 )
+		Self.MoveTo OrcHero  10 10 10 
+	endif
+
+	if ( Self.GetDead || Self.getav health < 10)
+		Self.resurrect
+		Self.resethealth
+	endif
+
+	if IsInTDM == 0 && IsInTDMX == 0		;we only have 2 maps. if both are not in TDM, disable the hero
+		Self.disable
+	endif
+
+end
+--------------------------------end adenturer script
