@@ -162,6 +162,8 @@ Begin OnDrop player
 			let IsIgnoreNW := 0
 		endif
 
+	Print "Weight: "+$Weight+"   Value: "+$Value+" Health: "+$Health+"    Speed: "+$Speed+"     Reach: "+$Reach+"    Damage: "+$Damage+"    Effects Number: "+$NumofEffects
+
 	if IsDivine == 1
 		Item.SetWeight 40 Item
 		Item.SetGoldValue 50000 Item
@@ -181,8 +183,6 @@ Begin OnDrop player
 		Item.SetAttackDamage Damage Item
 		Item.SetIgnoresResistance IsIgnoreNW Item
 	endif
-
-	Print "Weight: "+$Weight+"   Value: "+$Value+" Health: "+$Health+"    Speed: "+$Speed+"     Reach: "+$Reach+"    Damage: "+$Damage+"    Effects Number: "+$NumofEffects
 
 	;Magic Time!!
 
