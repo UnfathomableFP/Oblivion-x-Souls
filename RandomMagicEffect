@@ -1,3 +1,4 @@
+
 ScriptName GetRandMagicCode
 
 short offensive
@@ -7,235 +8,237 @@ short MECode
 Begin Function { offensive }
 	if offensive == 0		;defensive magic effects
 
-		let random := GetRandomPercent / 100 * 143	;number 1 to 143
+		let random := GetRandomPercent / 100 * 46	;number 1 to 143
 		let random := ceil random
 
 		if random == 1
-                        let MECode:=MagicEffectCodeFromChars "ABSP"
-		elseif random == 6
 			let MECode:= MagicEffectCodeFromChars"BRDN"
-		elseif random == 8
+		elseif random == 2
 			let MECode:= MagicEffectCodeFromChars"CHML"
-		elseif random == 14
+		elseif random == 3
 			let MECode:= MagicEffectCodeFromChars"CUDI"
-		elseif random == 17
+		elseif random == 4
 			let MECode:= MagicEffectCodeFromChars"CUPA"
-		elseif random == 20
+		elseif random == 5
 			let MECode:= MagicEffectCodeFromChars"CUPO"
-		elseif random  == 35
+		elseif random  == 6
 			let MECode:= MagicEffectCodeFromChars"DSPL"
-		elseif random == 36
+		elseif random == 7
 			let MECode:= MagicEffectCodeFromChars"DTCT"
-		elseif random == 40
+		elseif random == 8
 			let MECode:= MagicEffectCodeFromChars"FISH"
-		elseif random == 43
+		elseif random == 9
 			let MECode:= MagicEffectCodeFromChars"FOAT"
-		elseif random == 46
+		elseif random == 10
 			let MECode:= MagicEffectCodeFromChars"FOFA"
-		elseif random == 49
+		elseif random == 11
 			let MECode:= MagicEffectCodeFromChars"FOHE"
-		elseif  random == 52
+		elseif  random == 12
 			let MECode:= MagicEffectCodeFromChars"FOMM"
-		elseif random == 55
+		elseif random == 13
 			let MECode:= MagicEffectCodeFromChars"FOSK"
-		elseif random  == 58
+		elseif random  == 14
 			let MECode:= MagicEffectCodeFromChars"FOSP"
-		elseif random  == 63
+		elseif random  == 15
 			let MECode:= MagicEffectCodeFromChars"FRSH"
-		elseif random  == 66
+		elseif random  == 16
 			let MECode:= MagicEffectCodeFromChars"FTHR"
-		elseif random  == 69
+		elseif random  == 17
 			let MECode:= MagicEffectCodeFromChars"LGHT"
-		elseif random  == 72
+		elseif random  == 18
 			let MECode:= MagicEffectCodeFromChars"LISH"
-		elseif random  == 75
+		elseif random  == 19
 			let MECode:= MagicEffectCodeFromChars"NEYE"
-		elseif random  == 81
+		elseif random  == 20
 			let MECode:= MagicEffectCodeFromChars"REAT"
-		elseif random  == 84
+		elseif random  == 21
 			let MECode:= MagicEffectCodeFromChars"REDG"
-		elseif random  == 87 
+		elseif random  == 22 
 			let MECode:= MagicEffectCodeFromChars"REFA"
-		elseif random  == 90
+		elseif random  == 23
 			let MECode:= MagicEffectCodeFromChars"REHE"
-		elseif random  == 93 
+		elseif random  == 24 
 			let MECode:= MagicEffectCodeFromChars"RESP"
-		elseif random  == 96 
+		elseif random  == 25 
 			let MECode:= MagicEffectCodeFromChars"RFLC"
-		elseif random  == 99
+		elseif random  == 26
 			let MECode:= MagicEffectCodeFromChars"RSDI"
-		elseif random  == 102
+		elseif random  == 27
 			let MECode:= MagicEffectCodeFromChars"RSFI"
-		elseif random  == 104
+		elseif random  == 28
 			let MECode:= MagicEffectCodeFromChars"RSFR"
-		elseif random  == 107
+		elseif random  == 29
 			let MECode:= MagicEffectCodeFromChars"RSMA"
-		elseif random  == 110
+		elseif random  == 30
 			let MECode:= MagicEffectCodeFromChars"RSNW"
-		elseif random  == 113
+		elseif random  == 31
 			let MECode:= MagicEffectCodeFromChars"RSPA"
-		elseif random  == 116
+		elseif random  == 32
 			let MECode:= MagicEffectCodeFromChars"RSPO"
-		elseif random  == 119 
+		elseif random  == 33 
 			let MECode:= MagicEffectCodeFromChars"RSSH"
-		elseif random  == 122
+		elseif random  == 34
 			let MECode:= MagicEffectCodeFromChars"RSWD"
-		elseif random  == 125 
+		elseif random  == 35 
 			let MECode:= MagicEffectCodeFromChars"SABS"
-		elseif random  == 129
+		elseif random  == 36
 			let MECode:= MagicEffectCodeFromChars"SHLD"
-		elseif random  == 132
+		elseif random  == 37
 			let MECode:= MagicEffectCodeFromChars"SLNC"
-		elseif random  == 133
+		elseif random  == 38
 			let MECode:= MagicEffectCodeFromChars"STMA"
-		elseif random  == 136
-			let MECode:= MagicEffectCodeFromChars"STRP"
-		elseif random  == 137
-			let MECode:=MagicEffectCodeFromChars "SUDG"		
+		elseif random  == 39
+			let MECode:=MagicEffectCodeFromChars "SUDG"
+		elseif random  == 40
+			let MECode:=MagicEffectCodeFromChars"WKDI"		
+		elseif random  == 41
+			let MECode:=MagicEffectCodeFromChars"WKFI"		
+		elseif random  == 42 
+			let MECode:=MagicEffectCodeFromChars"WKFR"		
+		elseif random  == 43
+			let MECode:=MagicEffectCodeFromChars"WKMA"		
+		elseif random  == 44
+			let MECode:=MagicEffectCodeFromChars"WKNW"		
+		elseif random  == 45
+			let MECode:=MagicEffectCodeFromChars"WKPO"		
+		elseif random  == 46 
+			let MECode:=MagicEffectCodeFromChars"WKSH"				
 		endif
 
 
 	elseif offensive == 1		;offensive spell effects
 
-		let random := GetRandomPercent / 100 * 162		;number 1 to 162
+		let random := GetRandomPercent / 100 * 62		;number 1 to 62
 		let random := ceil random
 
 		if random == 1
 			let MECode:=MagicEffectCodeFromChars "ABAT"
-		elseif random == 4
+		elseif random == 2
 			let MECode:=MagicEffectCodeFromChars "ABFA"
-		elseif random == 7 
+		elseif random == 3 
 			let MECode:= MagicEffectCodeFromChars"ABHE"
-		elseif random == 10 
+		elseif random == 4 
 			let MECode:= MagicEffectCodeFromChars"ABSK"
-		elseif random == 13 
+		elseif random == 5
 			let MECode:=MagicEffectCodeFromChars "ABSP"
-		elseif random == 16
+		elseif random == 6
 			let MECode:= MagicEffectCodeFromChars"BRDN"
-		elseif random == 19 
+		elseif random == 7 
 			let MECode:= MagicEffectCodeFromChars"CALM"
-		elseif random == 22 
+		elseif random == 8 
 			let MECode:= MagicEffectCodeFromChars"CHML"
-		elseif random == 23 
+		elseif random == 9 
 			let MECode:= MagicEffectCodeFromChars"CHRM"
-		elseif random == 26 
+		elseif random == 10 
 			let MECode:= MagicEffectCodeFromChars"COCR"
-		elseif random == 29 
+		elseif random == 11 
 			let MECode:= MagicEffectCodeFromChars"COHU"
-		elseif random == 32
+		elseif random == 12
 			let MECode:= MagicEffectCodeFromChars"CUDI"
-		elseif random == 33
+		elseif random == 13
 			let MECode:= MagicEffectCodeFromChars"CUPA"
-		elseif random == 34
+		elseif random == 14
 			let MECode:= MagicEffectCodeFromChars"CUPO"
-		elseif random == 35
+		elseif random == 15
 			let MECode:= MagicEffectCodeFromChars"DEMO"
-		elseif random == 38
+		elseif random == 16
 			let MECode:= MagicEffectCodeFromChars"DGAT"
-		elseif random == 41
+		elseif random == 17
 			let MECode:= MagicEffectCodeFromChars"DGFA"
-		elseif random == 44
+		elseif random == 18
 			let MECode:= MagicEffectCodeFromChars"DGHE"
-		elseif random  == 47
+		elseif random  == 19
 			let MECode:=MagicEffectCodeFromChars "DGSP"
-		elseif random  == 50
+		elseif random  == 20
 			let MECode:= MagicEffectCodeFromChars"DIAR"
-		elseif random  == 53
+		elseif random  == 21
 			let MECode:= MagicEffectCodeFromChars"DIWE"
-		elseif random  == 56
+		elseif random  == 22
 			let MECode:=MagicEffectCodeFromChars "DRAT"
-		elseif random  == 59 
+		elseif random  == 23
 			let MECode:= MagicEffectCodeFromChars"DRFA"
-		elseif random  == 62
+		elseif random  == 24
 			let MECode:= MagicEffectCodeFromChars"DRHE"
-		elseif random  == 65
+		elseif random  == 25
 			let MECode:= MagicEffectCodeFromChars"DRSK"
-		elseif random  == 68
+		elseif random  == 26
 			let MECode:= MagicEffectCodeFromChars"DRSP"
-		elseif random  == 71
+		elseif random  == 27
 			let MECode:= MagicEffectCodeFromChars"DSPL"
-		elseif random  == 74
-			let MECode:= MagicEffectCodeFromChars"DTCT"
-		elseif random  == 75 
+		elseif random  == 28 
 			let MECode:= MagicEffectCodeFromChars"FIDG"	;1195657542 
-		elseif random  == 85 
+		elseif random  == 29 
 			let MECode:= MagicEffectCodeFromChars"FRDG"
-		elseif random  == 88
+		elseif random  == 30
 			let MECode:= MagicEffectCodeFromChars"FRNZ"
-		elseif random  == 93
+		elseif random  == 31
 			let MECode:= MagicEffectCodeFromChars"LGHT"
-		elseif random  == 97 
+		elseif random  == 32 
 			let MECode:= MagicEffectCodeFromChars"PARA"
-		elseif random  == 100 || random == 101 || random == 102
+		elseif random  == 33
 			let MECode:= MagicEffectCodeFromChars"RALY"
-		elseif random  == 103 || random == 104 || random == 105
+		elseif random  == 34 
 			let MECode:= MagicEffectCodeFromChars"REAN"
-		elseif random  == 106
+		elseif random  == 35
 			let MECode:= MagicEffectCodeFromChars"REAT"
-		elseif random  == 107
+		elseif random  == 36
 			let MECode:= MagicEffectCodeFromChars"REDG"
-		elseif random  == 108
+		elseif random  == 37
 			let MECode:= MagicEffectCodeFromChars"REFA"
-		elseif random  == 109
+		elseif random  == 38
 			let MECode:= MagicEffectCodeFromChars"REHE"
-		elseif random  == 110
+		elseif random  == 39
 			let MECode:= MagicEffectCodeFromChars"RESP"
-		elseif random  == 111
+		elseif random  == 40
 			let MECode:= MagicEffectCodeFromChars"RFLC"
-		elseif random  == 112
+		elseif random  == 41
 			let MECode:= MagicEffectCodeFromChars"RSDI"
-		elseif random  == 113
+		elseif random  == 42
 			let MECode:= MagicEffectCodeFromChars"RSFI"
-		elseif random  == 114
+		elseif random  == 43
 			let MECode:= MagicEffectCodeFromChars"RSFR"
-		elseif random  == 115
+		elseif random  == 44
 			let MECode:= MagicEffectCodeFromChars"RSMA"
-		elseif random  == 116
+		elseif random  == 45
 			let MECode:= MagicEffectCodeFromChars"RSNW"
-		elseif random  == 117
+		elseif random  == 46
 			let MECode:= MagicEffectCodeFromChars"RSPA"
-		elseif random  == 118
+		elseif random  == 47
 			let MECode:= MagicEffectCodeFromChars"RSPO"
-		elseif random  == 119
+		elseif random  == 48
 			let MECode:= MagicEffectCodeFromChars"RSSH"
-		elseif random  == 120
+		elseif random  == 49
 			let MECode:= MagicEffectCodeFromChars"RSWD"
-		elseif random  == 121
-			let MECode:= MagicEffectCodeFromChars"SABS"
-		elseif random  == 122 || random == 123 || random == 124
+		elseif random  == 50
 			let MECode:= MagicEffectCodeFromChars"SHDG"
-		elseif random  == 125
-			let MECode:= MagicEffectCodeFromChars"SHLD"
-		elseif random  == 126 || random == 127 || random == 128
+		elseif random  == 51
 			let MECode:= MagicEffectCodeFromChars"SLNC"
-		elseif random  == 129 || random == 130 || random == 131
+		elseif random  == 52 
 			let MECode:= MagicEffectCodeFromChars"STMA"
-		elseif random  == 132 || random == 133 || random == 134
+		elseif random  == 53 
 			let MECode:= MagicEffectCodeFromChars"STRP"
-		elseif random  == 135 || random == 136 || random == 137
+		elseif random  == 54
 			let MECode:=MagicEffectCodeFromChars "SUDG"
-		elseif random  == 138
-			let MECode:= MagicEffectCodeFromChars"TELE"
-		elseif random  == 139 || random == 140 || random == 141
+		elseif random  == 55
 			let MECode:=MagicEffectCodeFromChars"TURN"		
-		elseif random  == 142 || random == 143 || random == 144
+		elseif random  == 56
 			let MECode:=MagicEffectCodeFromChars"WKDI"		
-		elseif random  == 145 || random == 146 || random == 147
+		elseif random  == 57
 			let MECode:=MagicEffectCodeFromChars"WKFI"		
-		elseif random  == 148 || random == 149 || random == 150
+		elseif random  == 58 
 			let MECode:=MagicEffectCodeFromChars"WKFR"		
-		elseif random  == 151 || random == 152 || random == 153
+		elseif random  == 59
 			let MECode:=MagicEffectCodeFromChars"WKMA"		
-		elseif random  == 154 || random == 155 || random == 156
+		elseif random  == 60
 			let MECode:=MagicEffectCodeFromChars"WKNW"		
-		elseif random  == 157 || random == 158 || random == 159
+		elseif random  == 61
 			let MECode:=MagicEffectCodeFromChars"WKPO"		
-		elseif random  == 160 || random == 161 || random == 162
+		elseif random  == 62
 			let MECode:=MagicEffectCodeFromChars"WKSH"		
 		endif
 	endif
 
-	;Print "(f) Return code: " + $MECode
+	Print "(f) Return code: " + $MECode
 	SetFunctionValue MECode
 	Return
 end
