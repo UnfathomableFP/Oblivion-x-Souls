@@ -10,8 +10,8 @@ string_var  NameE ;Name of Enchantment 1
 short Weight
 short Value
 short Health
-short Speed
-short Reach
+float Speed
+float Reach
 short Damage
 short MEDamage		;range and duration should always be 0, damage is random.
 short MECharge
@@ -20,7 +20,7 @@ short MEDuration ;enchantment duration. divide damage by EDuration - 1, unless i
 short RandomN
 short Rarity			;weapon rarity 1-8
 short RangeofEffects		;the range of magical effects
-short NumofEffects		;the number of magical effects
+float NumofEffects		;the number of magical effects
 short IsIgnoreNW	;ignores normal weapon resistance
 
 ;weapons have a % chance of being Exalted, an upper status that boosts magic effects. 
@@ -28,9 +28,9 @@ short IsIgnoreNW	;ignores normal weapon resistance
 ;Players will want this
 short ExaltedRoll
 short ExaltedBonus   ;+5 to effects
-short ExaltedWeight  ;weight becomes 25% lighter
-short ExaltedValue   ;value is 30% higher
-short ExaltedSpeed   ;speed is 0.1 faster
+float ExaltedWeight  ;weight becomes 25% lighter
+float ExaltedValue   ;value is 30% higher
+float ExaltedSpeed   ;speed is 0.1 faster
 short ExaltedHealth  ;+2000 item health
 
 short IsDivine		;Divine weapons have all of their rolled stats maxed out instead.
@@ -131,12 +131,12 @@ Begin OnDrop player
 	printc "Number of Effects: %f" NumofEffects
 
 	;round the number of effects up or down, since ROUND is not a function:
-		Print "Number of Effects Calculator: " + $NumofEffects  + " - "+ $(floor NumofEffects) +"="+ $(NumofEffects - (floor NumofEffects))
 	if ( ( (ceil NumofEffects) - (NumofEffects)) > 0.5 )		
-		let NumofEffects := ceil NumofEffects					;round it up to at least 1
+		let NumofEffects := floor NumofEffects					;round it up to at least 1
 	else
-		let NumofEffects := floor NumofEffects					;round down	
+		let NumofEffects := ceil NumofEffects					;round down	
 	endif
+	printc "Number of Effects: %f" NumofEffects
 
 	;set weight, value, health, speed, reach, damage, and IsIgnoreNW
 	let Weight := ( Level + ( GetRandomPercent/ (Level / 2) ) ) * ExaltedWeight
@@ -148,9 +148,9 @@ Begin OnDrop player
 			set Value to ( player.getav Luck ) + ( player.getav Personality )
 		endif
 	let Health := 250 * Rarity + ExaltedHealth
-	let Speed := 0.7 + GetRandomPercent/200 + ExaltedSpeed
+	Set Speed to ( 0.7 + GetRandomPercent/200 + ExaltedSpeed )
 		if Speed < 0.8
-			let Speed := 0.8
+			set Speed to 0.8
 		endif
 	let Reach := 0.8 + GetRandomPercent/100
 	let Damage := (Weight)/3 + Rarity + ( Level * GetRandomPercent / 50 ) + ExaltedBonus
@@ -161,8 +161,6 @@ Begin OnDrop player
 		else
 			let IsIgnoreNW := 0
 		endif
-
-	Print "Weight: "+$Weight+"   Value: "+$Value+" Health: "+$Health+"    Speed: "+$Speed+"     Reach: "+$Reach+"    Damage: "+$Damage+"    Effects Number: "+$NumofEffects
 
 	if IsDivine == 1
 		Item.SetWeight 40 Item
@@ -183,6 +181,10 @@ Begin OnDrop player
 		Item.SetAttackDamage Damage Item
 		Item.SetIgnoresResistance IsIgnoreNW Item
 	endif
+
+	Print "Weight: "+$Weight+"   Value: "+$Value+" Health: "+$Health
+	Print "Speed: "+$Speed+"     Reach: " + $Reach+ "    Damage: "+$Damage    
+	Print "Number of Effects: "+$NumofEffects
 
 	;Magic Time!!
 
