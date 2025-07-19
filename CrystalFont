@@ -1,0 +1,198 @@
+scn SEPalaceFontSCRIPT
+
+; used for SE12
+short equipStaff		; used to decide whether to reequip staff
+short newlevel
+short DoOnce
+short SL
+short soulDifference
+short souls
+short Choosing
+short button
+
+;used for level up menu
+
+begin OnActivate
+	set Choosing to -1
+	set button to -1
+	if isActionRef player == 1
+		if getstage SE12 >= 5 && getstage SE12 < 180
+			setstage SE12 7
+			message "The Font is covered with Order crystals and is inaccessible."
+		elseif getstage SE12 == 180
+			; player wins! gets Super Duper Sheogorath powers!
+			setstage SE12 200
+		elseif getstage SE12 == 200 && Player.GetItemCount SE12StaffofSheogorath >=1
+			; player has staff -- recharge it
+			if player.getEquipped SE12StaffofSheogorath == 1
+				set equipStaff to 1
+			else
+				set equipStaff to 0
+			endif
+			player.removeitem SE12StaffofSheogorath 10
+			player.additem SE12StaffofSheogorath 1
+			if equipStaff == 1
+				player.equipItem SE12StaffofSheogorath
+			endif
+		endif
+
+		;Mod Time!!!
+		;if the player has the Staff of Sheogorath, the font will beckon them IF they have daedric artifacts
+		if player.getitemcount SE12StaffofSheogorath > 0 && ( ( player.getitemcount DAWabbajack01 > 0 ) ||  ( player.getitemcount SE45ForkHorripilation > 0 ) || ( player.getitemcount MS43EverscampStaff > 0 ) )
+
+			;if player has the Wabbajack, the player / Staff of Sheogorath can absorb it
+			if ( player.getitemcount DAWabbajack01 > 0 )
+				player.removeitem DAWabbajack01 1
+				set newlevel to player.getlevel +5
+				player.setlevel newlevel
+				player.modav Luck 25
+				player.modav Health 50
+				player.modav Magicka 50
+				player.modav Fatigue 50
+				player.addspell 11DSWabbajackPower
+				Messagebox "With the Staff of Sheogorath on your back, you approach the Font of Madness, feeling drawn to it. As you soak your hands in these blessed waters, washing your face, you feel the Wabbajack shaking. A feeling comes over you, and you grasp both Wabbajack and your staff, submerging both into the font. Powerful magics break down the Wabbajack, absorbing it into your staff!" "continue"
+				Messagebox " You gain +5 levels, +25 to Luck, and +50 to health, magicka, and fatigue. The Wabbajack's powers are now at your fingertips!" "I... have... The Power!!"
+			endif
+
+			;if player has The Fork of Horripilation, the SoS can absorb it
+			if ( player.getitemcount SE45ForkHorripilation > 0 )
+				player.removeitem SE45ForkHorripilation 1
+				set newlevel to player.getlevel +5
+				player.setlevel newlevel
+				player.modav Luck 25
+				player.modav Health 50
+				player.modav Magicka 50
+				player.modav Fatigue 50
+				player.addspell 11DSHorripilation
+				Messagebox "With the Staff of Sheogorath on your back, you approach the Font of Madness, feeling thirsty but exhilarated. As you fill your hands with these blessed waters, ready to drink deep of these crystalline waters, you feel the Fork of Horripilation giving off an intense heat. A feeling comes over you, and you submerge Forky in the waters with your staff.. Powerful magics break down the fork, absorbing it into your staff!" "continue"
+				Messagebox " You gain +5 levels, +25 to Luck, and +50 to health, magicka, and fatigue. The Fork of Horripilation's powers are now at your fingertips!" "I... have... The Power!!"
+			endif
+
+			;if player has The Everscamp Staff, the player / SoS can absorb it
+			if ( player.getitemcount MS43EverscampStaff > 0 )
+				player.removeitem MS43EverscampStaff 1
+				set newlevel to player.getlevel +5
+				player.setlevel newlevel
+				player.modav Luck 25
+				player.modav Health 50
+				player.modav Magicka 50
+				player.modav Fatigue 50
+				player.addspell 11DSEverscampAttack
+				Messagebox "With the Staff of Sheogorath on your back, the four wretched scamps grab you by the arms and hands and begin pulling you towards the Font of Madness. As they approach the font, each one touches the font and vanishes into ashes. You know what they mean to do - to become one with your power. Pulling out The Staff of The Everscamp, you place it into the waters alongside your staff, and the two become one." "continue"
+				Messagebox "You gain +5 levels, +25 to Luck, and +50 to health, magicka, and fatigue. The Everscamp's powers are now at your fingertips!" "I... have... The Power!!"
+			endif
+		endif
+	endif
+
+	;let the player use this font ot level up.
+	set SL to player.getlevel
+
+	if (SoulsNeeded < 100)
+		set SoulsNeeded to 0
+		if (SL > 0)
+			set SoulsNeeded to (SoulsNeeded* (pow 1.01 SL) + 50 * SL)
+		endif
+		if (player.getlevel > 10)
+			set SoulsNeeded to (SoulsNeeded* (pow 1.01 SL) + 400 * SL)
+		endif
+		if (player.getlevel  > 30)
+			set SoulsNeeded to (SoulsNeeded* (pow 1.01 SL) + 2000 * SL)
+		endif	
+	endif
+
+	if isActionRef player == 1
+		set souls to player.getitemcount 11DSSoul
+		set soulDifference to (SoulsNeeded - Souls)
+		if ( player.getitemcount 11DSSoul > 0)
+			if DoOnce == 0
+				MessageBox "You need %f souls to level up. Do you cast these souls forever into the fires of Oblivion?", SoulsNeeded, "Yes", "NO!"
+				set DoOnce to 1
+			endif			
+			set Choosing to 1
+			set DoOnce to 0
+		else
+			if DoOnce == 0
+				MessageBox "You do not have the souls to level up. Come again when your vessel is worthy! ( need %f more souls )" soulDifference
+				set DoOnce to 1
+			endif
+			set Choosing to -1
+			set DoOnce to 0
+		endif
+	endif	
+end
+
+
+begin GameMode
+
+if player.getitemcount SE12StaffofSheogorath > 0 && ( ( player.getitemcount DAWabbajack01 > 0 ) ||  ( player.getitemcount SE45ForkHorripilation > 0 ) || ( player.getitemcount MS43EverscampStaff > 0 ) )
+	if ( getinsamecell player == 1 && DoOnce == 0 )
+		Messagebox "You feel yourself being tugged towards The Font of Madness... As if being called over." "Go to The Font of Madness"
+		set DoOnce to 1
+	else
+		set DoOnce to 0
+	endif
+endif
+
+
+if Choosing <= 0
+	return
+elseif Choosing == 1
+	set button to getbuttonpressed
+	printc "(Line 141) Is Choosing 11? %f      Choice: %f" Choosing button
+
+	if button == 0	;yes
+	;remove the souls and show the level up menu
+	player.removeitem 11DSSoul SoulsNeeded
+	set SL to SL + 1
+	Player.setlevel SL
+	;increase the souls needed:
+		;if certain levels:
+		if (SL > 0)
+			set SoulsNeeded to (SoulsNeeded*1.01 + 50)
+		endif
+		if (player.getlevel > 10)
+			set SoulsNeeded to (SoulsNeeded*1.01 + 400)
+		endif
+		if (player.getlevel  > 30)
+			set SoulsNeeded to (SoulsNeeded*1.01 + 2000)
+		endif
+		if DoOnce == 0
+			Messagebox "Which Attribute will increase by +5?" "Strength" "Agility" "Endurance" "Speed" "Intelligence" "Willpower" "Personality" "Luck"			
+		endif
+		set Choosing to 11
+		set DoOnce to 0
+
+		printc "Is Choosing 11? %f      Choice: %f" Choosing button
+
+		elseif button == 1
+			printc "(Line 166) Is Choosing 11? %f      Choice: %f" Choosing button
+
+			;do nothing
+			set Choosing to -1
+			set button to -1
+		endif
+elseif Choosing == 11
+	set button to GetButtonPressed
+	printc "increasing an attribute: %f " button
+	if button == 0 ;strength
+		player.ModAV Strength 5
+	elseif button == 1 ;agility
+		player.ModAV agility 5
+	elseif button == 2 ;endurance
+		player.ModAV endurance 5
+	elseif button == 3 ;Speed
+		player.ModAV speed 5
+	elseif button == 4 ;Intelligence
+		player.ModAV intelligence 5
+	elseif button == 5 ;Willpower
+		player.ModAV willpower 5
+	elseif button == 6 ;Personality
+		player.ModAV personality 5
+	elseif button == 7 ;Luck
+		player.ModAV luck 5
+	endif
+
+	set Choosing to -1
+	set button to -1
+endif
+end
